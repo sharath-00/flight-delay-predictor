@@ -18,11 +18,17 @@ df['Delay_Minutes'] = df['Delay_Minutes'].clip(upper=300)
 
 # Encode categorical features
 categorical_cols = ['Airline', 'Dep_Airport', 'Arr_Airport', 'Dep_Weather', 'Arr_Weather']
-label_encoders = {}
+# After label encoding
+encoders = {}
 for col in categorical_cols:
     le = LabelEncoder()
     df[col] = le.fit_transform(df[col])
-    label_encoders[col] = le
+    encoders[col] = le
+
+# Save encoders
+with open('models/encoders.pkl', 'wb') as f:
+    pickle.dump(encoders, f)
+
 
 # Normalize numeric features
 num_cols = ['Dep_Temp', 'Dep_Humidity', 'Dep_WindSpeed', 'Dep_Visibility',
@@ -61,8 +67,7 @@ print("✅ R2 Score:", r2_score(y_test, y_pred))
 with open("models/xgboost_regressor_model.pkl", "wb") as f:
     pickle.dump(model, f)
 
-with open("models/label_encoders.pkl", "wb") as f:
-    pickle.dump(label_encoders, f)
+
 
 with open("models/feature_columns.pkl", "wb") as f:
     pickle.dump(list(X.columns), f)
