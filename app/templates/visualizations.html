@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flight Delay Visualizations</title>
+</head>
+<body>
+    <h2>Flight Delay Analysis</h2>
+    <div>
+        <h3>1. Delay Distribution</h3>
+        <img src="{{ url_for('static', filename='plots/delay_distribution.png') }}" width="600">
+    </div>
+
+    <div>
+        <h3>2. Airline-wise Delays</h3>
+        <img src="{{ url_for('static', filename='plots/airline_delays.png') }}" width="800">
+    </div>
+
+    <div>
+        <h3>3. Weather vs Delay (Visibility)</h3>
+        <img src="{{ url_for('static', filename='plots/weather_vs_delay.png') }}" width="600">
+    </div>
+
+    <div>
+        <h3>4. Airport-wise Delay Trends</h3>
+        <img src="{{ url_for('static', filename='plots/airport_delay.png') }}" width="800">
+    </div>
+
+    <div>
+        <h3>5. XGBoost Feature Importances</h3>
+        <img src="{{ url_for('static', filename='plots/feature_importance.png') }}" width="800">
+    </div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flight Delay Predictor</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Blurred background image */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("{{ url_for('static', filename='images/flight-1600x900.webp') }}");
+            background-size: cover;
+            background-position: center;
+            filter: blur(5px);
+            opacity: 0.6;
+            z-index: -1;
+        }
+
+        .container {
+            position: relative;
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            color: #5a2ea1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #5a0cad;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background image -->
+    <div class="background"></div>
+
+    <!-- Foreground form -->
+    <div class="container">
+        <h2>✈️ Real-Time Flight Delay Predictor</h2>
+        <form method="post" action="/predict_realtime">
+            <label for="flight_number">Flight Number</label>
+            <input type="text" id="flight_number" name="flight_number" required>
+
+            <button type="submit">Predict Delay</button>
+        </form>
+    </div>
+
+</body>
+</html>
