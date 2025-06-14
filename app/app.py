@@ -139,4 +139,6 @@ def get_delay_reasons(dep_weather, arr_weather):
     return reasons if reasons else ["Weather conditions are normal"]
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
