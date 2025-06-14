@@ -22,9 +22,8 @@ xgb_reg_model = joblib.load("models/xgboost_regressor_model.pkl")
 with open('models/feature_columns.pkl', 'rb') as f:
     feature_columns = pickle.load(f)
 
-with open('models/label_encoders.pkl', 'rb') as f:
-    label_encoders = pickle.load(f)
-
+with open('models/encoders.pkl', 'rb') as f:
+    encoders = pickle.load(f)
 with open('models/scaler.pkl', 'rb') as f:
     scaler = pickle.load(f)
 
@@ -77,15 +76,14 @@ def predict():
 
     # Encode categorical features using label encoders
     for col in ['Airline', 'Dep_Airport', 'Arr_Airport', 'Dep_Weather', 'Arr_Weather']:
-        le = label_encoders.get(col)
-        if le:
-            val = df_input[col].iloc[0]
-            if val not in le.classes_:
-                le.classes_ = np.append(le.classes_, val)
-            df_input[col] = le.transform([val])[0]  # assign scalar, not array
+        if col in df_input.columns:
+            le = encoders[col]
+            df_input[col] = df_input[col].apply(lambda x: le.transform([x])[0] if x in le.classes_ else -1)
 
-    # Reindex and scale features
-    df_input_encoded = df_input.reindex(columns=feature_columns, fill_value=0)
+# Now ensure the column order matches what model expects
+    df_input_encoded = df_input[feature_columns]
+
+# Only now apply scaling
     df_input_scaled = pd.DataFrame(scaler.transform(df_input_encoded), columns=feature_columns)
 
     # Predict delay status and delay time
