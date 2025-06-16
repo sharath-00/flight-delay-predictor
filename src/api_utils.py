@@ -75,6 +75,13 @@ mock_flights = {
             "departure_code": "PEK",
             "arrival_code": "YQX",
             "scheduled_departure": "14:50"
+        },
+    
+        "IG000":{
+            "airline": "Indigo Airlines",
+            "departure_code": "DEL",
+            "arrival_code": "COK",
+            "scheduled_departure": "14:50"
         }
     
 }
@@ -108,7 +115,7 @@ def get_weather(airport_code, api_key):
         }
 
 
-###def get_weather(airport_code, api_key):
+def get_weather(airport_code, api_key):
     try:
         url = f"http://api.weatherapi.com/v1/current.json?key={api_key}&q={airport_code}"
         response = requests.get(url)

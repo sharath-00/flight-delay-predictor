@@ -17,17 +17,11 @@ df.drop(columns=['Scheduled_Departure'], inplace=True)
 
 # Encode categorical columns
 categorical_cols = ['Airline', 'Dep_Airport', 'Arr_Airport', 'Dep_Weather', 'Arr_Weather']
-# After label encoding
-encoders = {}
+label_encoders = {}
 for col in categorical_cols:
     le = LabelEncoder()
     df[col] = le.fit_transform(df[col])
-    encoders[col] = le
-
-# Save encoders
-with open('models/encoders.pkl', 'wb') as f:
-    pickle.dump(encoders, f)
-
+    label_encoders[col] = le
 
 # Features and Target
 X = df.drop(columns=['Delay_Status', 'Delay_Minutes'])
@@ -108,7 +102,8 @@ os.makedirs("models", exist_ok=True)
 with open("models/xgboost_model.pkl", "wb") as f:
     pickle.dump(final_model, f)
 
-
+with open("models/label_encoders.pkl", "wb") as f:
+    pickle.dump(label_encoders, f)
 
 with open("models/feature_columns.pkl", "wb") as f:
     pickle.dump(feature_columns, f)

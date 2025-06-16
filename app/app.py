@@ -22,8 +22,9 @@ xgb_reg_model = joblib.load("models/xgboost_regressor_model.pkl")
 with open('models/feature_columns.pkl', 'rb') as f:
     feature_columns = pickle.load(f)
 
-with open('models/encoders.pkl', 'rb') as f:
-    encoders = pickle.load(f)
+with open('models/label_encoders.pkl', 'rb') as f:
+    label_encoders = pickle.load(f)
+
 with open('models/scaler.pkl', 'rb') as f:
     scaler = pickle.load(f)
 
@@ -76,14 +77,15 @@ def predict():
 
     # Encode categorical features using label encoders
     for col in ['Airline', 'Dep_Airport', 'Arr_Airport', 'Dep_Weather', 'Arr_Weather']:
-        if col in df_input.columns:
-            le = encoders[col]
-            df_input[col] = df_input[col].apply(lambda x: le.transform([x])[0] if x in le.classes_ else -1)
+        le = label_encoders.get(col)
+        if le:
+            val = df_input[col].iloc[0]
+            if val not in le.classes_:
+                le.classes_ = np.append(le.classes_, val)
+            df_input[col] = le.transform([val])[0]  # assign scalar, not array
 
-# Now ensure the column order matches what model expects
-    df_input_encoded = df_input[feature_columns]
-
-# Only now apply scaling
+    # Reindex and scale features
+    df_input_encoded = df_input.reindex(columns=feature_columns, fill_value=0)
     df_input_scaled = pd.DataFrame(scaler.transform(df_input_encoded), columns=feature_columns)
 
     # Predict delay status and delay time
@@ -116,7 +118,7 @@ def predict():
 
 def get_delay_reasons(dep_weather, arr_weather):
     reasons = []
-    if dep_weather['vis_km'] < 2:
+    if dep_weather['vis_km'] < 0.8:
         reasons.append("Low visibility at departure")
     if dep_weather['wind_kph'] > 40:
         reasons.append("Strong winds at departure")
@@ -125,7 +127,7 @@ def get_delay_reasons(dep_weather, arr_weather):
     if dep_weather['temperature'] < -20 or dep_weather['temperature'] > 40:
         reasons.append("Extreme temperature at departure")
 
-    if arr_weather['vis_km'] < 2:
+    if arr_weather['vis_km'] < 0.8:
         reasons.append("Low visibility at arrival")
     if arr_weather['wind_kph'] > 40:
         reasons.append("Strong winds at arrival")
@@ -137,6 +139,4 @@ def get_delay_reasons(dep_weather, arr_weather):
     return reasons if reasons else ["Weather conditions are normal"]
 
 if __name__ == '__main__':
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    app.run(debug=True)
