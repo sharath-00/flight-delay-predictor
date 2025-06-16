@@ -139,4 +139,4 @@ def get_delay_reasons(dep_weather, arr_weather):
     return reasons if reasons else ["Weather conditions are normal"]
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
